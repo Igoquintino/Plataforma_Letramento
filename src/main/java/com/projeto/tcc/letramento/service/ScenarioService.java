@@ -2,20 +2,38 @@ package com.projeto.tcc.letramento.service;
 
 import com.projeto.tcc.letramento.model.Scenario;
 import com.projeto.tcc.letramento.repository.ScenarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.JsonNode;
 
 @Service
 @RequiredArgsConstructor
 public class ScenarioService {
+
     private final ScenarioRepository scenarioRepository;
 
-    public Scenario getScenarioWithXRay(Long id) {
-        return scenarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Scenario not found with id: " + id));
+    // Busca o cenário completo (incluindo o JSONB do Raio-X)
+    public Scenario getScenarioWithXray(Long scenarioId) {
+        return scenarioRepository.findById(scenarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Scenario not found with id: " + scenarioId));
     }
 
-    public boolean compareUserResponse(Long scenarioId, Object input){
-        return true;
+    // Compara a resposta do usuário (input) com a resposta correta no JSONB do banco
+    public Boolean compareUserResponse(Long scenarioId, JsonNode input) {
+        Scenario scenario = getScenarioWithXray(scenarioId);
+        JsonNode quizData = scenario.getQuiz();
+
+        // Exemplo: Verifica se o campo "answer" do input bate com a "correct_answer" do BD
+        if (quizData.has("correct_answer") && input.has("answer")) {
+            return quizData.get("correct_answer").asString().equalsIgnoreCase(input.get("answer").asString());
+        }
+        return false;
+    }
+
+    // Retorna apenas o JSON do Quiz
+    public JsonNode getQuizData(Long scenarioId) {
+        Scenario scenario = getScenarioWithXray(scenarioId);
+        return scenario.getQuiz();
     }
 }
