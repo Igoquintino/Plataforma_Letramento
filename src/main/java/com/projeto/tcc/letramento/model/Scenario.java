@@ -19,7 +19,7 @@ public class Scenario {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "title_scenario", nullable = false)
     private String titleScenarios;
 
     @JdbcTypeCode(SqlTypes.JSON)
