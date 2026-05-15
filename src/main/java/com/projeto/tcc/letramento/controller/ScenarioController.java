@@ -7,6 +7,7 @@ import com.projeto.tcc.letramento.service.ScenarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api/scenarios")
@@ -52,4 +53,12 @@ public class ScenarioController {
 
         return ResponseEntity.ok(isCorrect ? "Correto!" : "Incorreto. Tente analisar o Raio-X novamente.");
     }
+
+    @GetMapping("/{id}/quiz")
+    public ResponseEntity<JsonNode> getQuizData(@PathVariable Long id) {
+        // Chamando a função que já criamos no ScenarioService
+        JsonNode quiz = scenarioService.getQuizData(id);
+        return ResponseEntity.ok(quiz);
+    }
+
 }
