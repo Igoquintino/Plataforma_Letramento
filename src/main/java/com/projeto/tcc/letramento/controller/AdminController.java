@@ -35,6 +35,4 @@ public class AdminController {
         adminService.deleteTrail(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }
