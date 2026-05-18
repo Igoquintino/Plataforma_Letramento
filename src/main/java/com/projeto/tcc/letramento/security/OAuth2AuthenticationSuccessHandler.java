@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -18,17 +19,17 @@ import java.io.IOException;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider; // Utilitário de JWT que criaremos a seguir
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+    public void onAuthenticationSuccess(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
         // Extraindo os dados fornecidos pelo Google OAuth2
         assert oAuth2User != null;
-        String googleId = oAuth2User.getAttribute("sub"); // ID estável do Google
+        String googleId = oAuth2User.getAttribute("sub");
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
 
@@ -38,7 +39,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         // Gera o JWT customizado da plataforma com o ID do usuário e a Role dele (ALUNO ou ADMIN)
         String token = jwtTokenProvider.generateToken(user);
 
-        // Redireciona o usuário de volta para o Frontend em React passando o token na URL
         // O seu frontend vai capturar esse token e salvar no LocalStorage ou Context API
         String targetUrl = "http://localhost:5173/login-success?token=" + token;
 

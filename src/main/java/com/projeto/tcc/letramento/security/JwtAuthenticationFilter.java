@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     private final JwtTokenProvider tokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
         String token = recoverToken(request);
@@ -35,7 +36,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 String role = decodedJwt.getClaim("role").asString();
 
                 // Regra crucial do Spring Security: Roles precisam do prefixo "ROLE_"
-                // para funcionar corretamente com o método .hasRole("ADMIN") no SecurityConfig
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
 
                 // Autentica o utilizador no contexto da requisição atual
