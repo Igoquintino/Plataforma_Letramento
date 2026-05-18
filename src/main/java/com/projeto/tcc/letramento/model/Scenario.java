@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode; // importa a anotação para especificar o tipo JDBC do campo JSON
 import org.hibernate.type.SqlTypes; // importa os tipos SQL do Hibernate para usar o tipo JSON
-import tools.jackson.databind.JsonNode; // usar o "Tipo JsonNode do Jackson para armazenar dados JSON"
+import com.fasterxml.jackson.databind.JsonNode; // usar o "Tipo JsonNode do Jackson para armazenar dados JSON"
 
 @Entity
 @Table(name = "scenarios")
@@ -16,7 +16,8 @@ import tools.jackson.databind.JsonNode; // usar o "Tipo JsonNode do Jackson para
 @NoArgsConstructor
 @AllArgsConstructor
 public class Scenario {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "title_scenario", nullable = false)

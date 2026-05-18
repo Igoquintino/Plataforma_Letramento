@@ -5,7 +5,7 @@ import com.projeto.tcc.letramento.repository.ScenarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tools.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class ScenarioService {
 
         // Exemplo: Verifica se o campo "answer" do input bate com a "correct_answer" do BD
         if (quizData.has("correct_answer") && input.has("answer")) {
-            return quizData.get("correct_answer").asString().equalsIgnoreCase(input.get("answer").asString());
+            return quizData.get("correct_answer").toString().equalsIgnoreCase(input.get("answer").toString());
         }
         return false;
     }
