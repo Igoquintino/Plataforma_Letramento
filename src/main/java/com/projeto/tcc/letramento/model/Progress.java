@@ -29,7 +29,7 @@ public class Progress {
     private LocalDateTime completedAt;
 
     @Column(name = "time_spent")
-    private Long TimeSpent = 0L; // Tempo gasto em segundos
+    private Long timeSpent = 0L; // Tempo gasto em segundos
 
     @Column(name = "user_feedback")
     private String userFeedback;
