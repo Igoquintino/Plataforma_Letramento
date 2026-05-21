@@ -1,5 +1,6 @@
 package com.projeto.tcc.letramento.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projeto.tcc.letramento.model.Scenario;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
 
@@ -20,20 +22,29 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ScenarioServiceTest {
+public class ScenarioServiceTest {
 
     @Mock
     private ScenarioRepository scenarioRepository;
 
     @InjectMocks
     private ScenarioService scenarioService;
+    private Scenario mockScenario;
 
     // Utilitário para transformar Strings em objetos JsonNode reais para o teste
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws JsonProcessingException {
         objectMapper = new ObjectMapper();
+
+        // Simula o JSONB que viria do banco de dados
+        String dbQuizJson = "{\"correct_answer\": \"phishing\"}";
+        JsonNode dbQuizNode = objectMapper.readTree(dbQuizJson);
+
+        mockScenario = new Scenario();
+        mockScenario.setId(1L);
+        mockScenario.setQuiz(dbQuizNode);
     }
 
     @Test
@@ -97,5 +108,51 @@ class ScenarioServiceTest {
         assertThatThrownBy(() -> scenarioService.getScenarioWithXray(invalidScenarioId))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Scenario not found");
+    }
+
+    @Test
+    @DisplayName("Deve retornar TRUE quando a resposta do aluno for exatamente igual")
+    void testCompareUserResponse_CorrectAnswer() throws Exception {
+        // Arrange
+        when(scenarioRepository.findById(1L)).thenReturn(Optional.of(mockScenario));
+        String inputJson = "{\"answer\": \"phishing\"}";
+        JsonNode inputNode = objectMapper.readTree(inputJson);
+
+        // Act
+        Boolean isCorrect = scenarioService.compareUserResponse(1L, inputNode);
+
+        // Assert
+        assertTrue(isCorrect, "A resposta deveria ser considerada correta.");
+        verify(scenarioRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Deve retornar TRUE mesmo se o aluno usar letras maiúsculas/minúsculas diferentes")
+    void testCompareUserResponse_CorrectAnswerCaseInsensitive() throws Exception {
+        // Arrange
+        when(scenarioRepository.findById(1L)).thenReturn(Optional.of(mockScenario));
+        String inputJson = "{\"answer\": \"PhIsHiNg\"}";
+        JsonNode inputNode = objectMapper.readTree(inputJson);
+
+        // Act
+        Boolean isCorrect = scenarioService.compareUserResponse(1L, inputNode);
+
+        // Assert
+        assertTrue(isCorrect, "A validação ignorar case (maiúsculas/minúsculas).");
+    }
+
+    @Test
+    @DisplayName("Deve retornar FALSE quando a resposta do aluno for incorreta")
+    void testCompareUserResponse_IncorrectAnswer() throws Exception {
+        // Arrange
+        when(scenarioRepository.findById(1L)).thenReturn(Optional.of(mockScenario));
+        String inputJson = "{\"answer\": \"spam\"}";
+        JsonNode inputNode = objectMapper.readTree(inputJson);
+
+        // Act
+        Boolean isCorrect = scenarioService.compareUserResponse(1L, inputNode);
+
+        // Assert
+        assertFalse(isCorrect, "A resposta deveria ser considerada incorreta.");
     }
 }
