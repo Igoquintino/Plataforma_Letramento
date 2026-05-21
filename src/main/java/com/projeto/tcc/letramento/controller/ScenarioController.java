@@ -30,10 +30,13 @@ public class ScenarioController {
 
     @PostMapping("/answer")
     public ResponseEntity<String> postAnswer(@RequestBody AnswerDTO answerData) {
+
+        com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        com.fasterxml.jackson.databind.JsonNode answersNode = mapper.valueToTree(answerData.answers());
         // 1. Valida se a resposta está correta comparando com o JSONB do banco
         boolean isCorrect = scenarioService.compareUserResponse(
                 answerData.scenarioId(),
-                answerData.answers()
+                answersNode
         );
 
         // 2. Aqui você definiria a nota (score). Exemplo simples: 100 se correto, 0 se errado.
