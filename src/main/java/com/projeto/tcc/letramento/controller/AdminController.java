@@ -18,7 +18,7 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @PostMapping("/tails")
+    @PostMapping("/trails")
     public ResponseEntity<Trail> postTrail(@RequestBody @Valid TrailRequestDTO data) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(adminService.createTrail(data));
