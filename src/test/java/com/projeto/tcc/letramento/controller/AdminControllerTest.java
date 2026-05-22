@@ -1,11 +1,12 @@
 package com.projeto.tcc.letramento.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;           // ✅ Jackson 3
 import com.projeto.tcc.letramento.dto.ScenarioRequestDTO;
-import com.projeto.tcc.letramento.dto.TrailRequestDTO;
 import com.projeto.tcc.letramento.enums.CidPillar;
 import com.projeto.tcc.letramento.model.Scenario;
 import com.projeto.tcc.letramento.model.Trail;
+import com.projeto.tcc.letramento.dto.TrailRequestDTO;
 import com.projeto.tcc.letramento.service.AdminService;
 import com.projeto.tcc.letramento.service.ProgressService;
 import com.projeto.tcc.letramento.service.ScenarioService;
@@ -19,6 +20,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -28,21 +30,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-// placeholder: remove framework-specific annotation to keep skeletons compiling
 @WebMvcTest(AdminController.class)
 class AdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    // ✅ Um único ObjectMapper Jackson 3 para toda a classe
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @MockitoBean
     private AdminService adminService;
 
-    // Outros mocks necessários para estabilizar o contexto Web
     @MockitoBean
     private ProgressService progressService;
 
@@ -52,9 +51,13 @@ class AdminControllerTest {
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
+    // =========================================================
+    // POST /api/admin/trails
+    // =========================================================
+
     @Test
-    @WithMockUser(roles = "ADMIN") // Garante autorização simulando papel administrativo
-    @DisplayName("Deve criar uma nova trilha através do painel admin com status 21 Created")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Deve criar uma nova trilha através do painel admin com status 201 Created")
     void testPostTrail_Success() throws Exception {
         // Arrange
         TrailRequestDTO requestData = new TrailRequestDTO("Engenharia Reversa", "Desmistificando binários");
@@ -67,24 +70,33 @@ class AdminControllerTest {
         when(adminService.createTrail(any(TrailRequestDTO.class))).thenReturn(createdTrail);
 
         // Act & Assert
-        // Nota técnica: Rota mantida com o typo "/tails" conforme mapeamento real do seu AdminController
         mockMvc.perform(post("/api/admin/trails")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestData))
-                        .with(csrf())) // CSRF obrigatório para operações POST
-                .andExpect(status().isCreated()) // Confirma retorno HTTP 201 Created
+                        .content(objectMapper.writeValueAsString(requestData)) // ✅ usa o único objectMapper
+                        .with(csrf()))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(5))
                 .andExpect(jsonPath("$.title").value("Engenharia Reversa"));
     }
+
+    // =========================================================
+    // POST /api/admin/scenarios
+    // =========================================================
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Deve criar um novo cenário através do painel admin com status 201 Created")
     void testPostScenario_Success() throws Exception {
+
+        // 1. ARRANGE
+        // ✅ createObjectNode() é o mesmo da API do Jackson 2 — funciona igual no Jackson 3
+        JsonNode xrayNode = objectMapper.createObjectNode().put("key", "value");
+        JsonNode quizNode = objectMapper.createObjectNode().put("question", "Qual é a flag?");
+
         ScenarioRequestDTO requestData = new ScenarioRequestDTO(
                 "Desafio de Engenharia Reversa",
-                objectMapper.createObjectNode().put("key", "value"), // Exemplo de xrayData
-                objectMapper.createObjectNode().put("question", "Qual é a flag?"), // Exemplo de quiz
+                xrayNode,
+                quizNode,
                 CidPillar.CONFIDENCIALIDADE,
                 5L
         );
@@ -92,6 +104,13 @@ class AdminControllerTest {
         when(adminService.createScenario(any(ScenarioRequestDTO.class)))
                 .thenAnswer(invocation -> {
                     ScenarioRequestDTO data = invocation.getArgument(0);
+
+                    System.out.println("\n==================================================");
+                    System.out.println("[MOCK SERVICE] Capturando dados enviados pelo Controller:");
+                    System.out.println("Título do Cenário: " + data.titleScenario());
+                    System.out.println("Pilar de Segurança: " + data.pillar());
+                    System.out.println("==================================================");
+
                     Scenario scenario = new Scenario();
                     scenario.setId(3L);
                     scenario.setTitleScenarios(data.titleScenario());
@@ -100,8 +119,30 @@ class AdminControllerTest {
                     scenario.setPillar(data.pillar());
                     return scenario;
                 });
+
+        // 2. ACT
+        var resultActions = mockMvc.perform(post("/api/admin/scenarios")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestData)) // ✅ usa o único objectMapper
+                .with(csrf()));
+
+        // 3. ASSERT
+        String jsonRespostaBruta = resultActions.andReturn().getResponse().getContentAsString();
+
+        System.out.println("\n==================================================");
+        System.out.println("[HTTP RESPONSE] JSON final devolvido pelo AdminController:");
+        System.out.println(jsonRespostaBruta);
+        System.out.println("==================================================\n");
+
+        resultActions
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(3))
+                .andExpect(jsonPath("$.titleScenarios").value("Desafio de Engenharia Reversa"));
     }
 
+    // =========================================================
+    // DELETE /api/admin/trails/{id}
+    // =========================================================
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -109,17 +150,23 @@ class AdminControllerTest {
     void testDeleteTrail_Success() throws Exception {
         // Arrange
         Long trailId = 10L;
-        doNothing().when(adminService).deleteTrail(trailId); // Métodos void usam doNothing() do Mockito
+        doNothing().when(adminService).deleteTrail(trailId);
 
         // Act & Assert
         mockMvc.perform(delete("/api/admin/trails/" + trailId)
-                        .with(csrf())) // CSRF obrigatório para operações DELETE
-                .andExpect(status().isNoContent()); // Confirma status HTTP 204 No Content
+                        .with(csrf()))
+                .andExpect(status().isNoContent());
+
+        System.out.println("Teste de exclusão de trilha com ID " + trailId + " passou com sucesso.");
     }
+
+    // =========================================================
+    // Placeholder
+    // =========================================================
 
     @Test
     void placeholder_adminController() {
-        // TODO: MockMvc tests for admin endpoints and role checks
+        // TODO: adicionar testes de autorização por papel (ADMIN vs USER)
         assertTrue(true);
     }
 }
