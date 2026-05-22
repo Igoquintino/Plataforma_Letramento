@@ -5,7 +5,7 @@ import com.projeto.tcc.letramento.repository.ScenarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 @Service
 @RequiredArgsConstructor
