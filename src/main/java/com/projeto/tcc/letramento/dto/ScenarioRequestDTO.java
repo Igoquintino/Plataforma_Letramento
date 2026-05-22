@@ -3,7 +3,7 @@ package com.projeto.tcc.letramento.dto;
 import com.projeto.tcc.letramento.enums.CidPillar;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 public record ScenarioRequestDTO(
         @NotBlank String titleScenario,
