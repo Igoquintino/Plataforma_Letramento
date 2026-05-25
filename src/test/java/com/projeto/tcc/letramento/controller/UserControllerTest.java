@@ -1,7 +1,6 @@
 package com.projeto.tcc.letramento.controller;
 
 import org.junit.jupiter.api.Test;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projeto.tcc.letramento.dto.UserUpdateDTO;
 import com.projeto.tcc.letramento.model.User;
 import com.projeto.tcc.letramento.service.ProgressService;
@@ -15,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// placeholder: remove framework-specific annotation to keep skeletons compiling
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 

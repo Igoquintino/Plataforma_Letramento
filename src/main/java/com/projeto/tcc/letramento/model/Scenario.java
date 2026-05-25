@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode; // importa a anotação para especificar o tipo JDBC do campo JSON
-import org.hibernate.type.SqlTypes; // importa os tipos SQL do Hibernate para usar o tipo JSON
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import tools.jackson.databind.JsonNode;
 
 @Entity
