@@ -1,5 +1,8 @@
 package com.projeto.tcc.letramento.service;
 
+import com.projeto.tcc.letramento.enums.ProgressStatus;
+import com.projeto.tcc.letramento.model.Progress;
+import com.projeto.tcc.letramento.model.Scenario;
 import com.projeto.tcc.letramento.model.Trail;
 import com.projeto.tcc.letramento.repository.ProgressRepository;
 import com.projeto.tcc.letramento.repository.ScenarioRepository;
@@ -13,8 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +34,7 @@ public class TrailServiceTest {
     private ProgressRepository progressRepository;
 
     @InjectMocks
-    private TrailService trailService; // Injeta automaticamente os mocks acima aqui dentro
+    private TrailService trailService;
 
     @Test
     @DisplayName("Deve retornar zero de progresso quando a trilha não tiver cenários")
@@ -52,6 +57,32 @@ public class TrailServiceTest {
     }
 
     @Test
+    @DisplayName("Deve calcular corretamente a porcentagem de progresso parcial da trilha")
+    void calculateTrailProgress_PartialCompletion() {
+        // Arrange
+        Long userId = 1L;
+        Long trailId = 10L;
+
+        Scenario s1 = new Scenario(); s1.setId(101L);
+        Scenario s2 = new Scenario(); s2.setId(102L);
+        List<Scenario> scenarios = List.of(s1, s2); // 2 cenários na trilha
+
+        when(scenarioRepository.findByTrailId(trailId)).thenReturn(scenarios);
+
+        Progress p1 = new Progress(); p1.setStatus(ProgressStatus.COMPLETED);
+        when(progressRepository.findByUserIdAndScenarioId(userId, 101L)).thenReturn(Optional.of(p1));
+
+        Progress p2 = new Progress(); p2.setStatus(ProgressStatus.IN_PROGRESS);
+        when(progressRepository.findByUserIdAndScenarioId(userId, 102L)).thenReturn(Optional.of(p2));
+
+        // Act
+        Double progress = trailService.calculateTrailProgress(userId, trailId);
+
+        // Assert
+        assertEquals(50.0, progress);
+    }
+
+    @Test
     @DisplayName("Deve retornar todas as trilhas ativas cadastradas")
     void shouldReturnAllActiveTrails() {
         // ARRANGE
@@ -71,6 +102,6 @@ public class TrailServiceTest {
         // ASSERT
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getTitle()).isEqualTo("Redes Sociais");
-        verify(trailRepository, times(1)).findAll(); // Garante que chamou o banco exatamente 1 vez
+        verify(trailRepository, times(1)).findAll();
     }
 }
