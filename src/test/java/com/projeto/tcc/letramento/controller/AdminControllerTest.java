@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -84,7 +85,6 @@ class AdminControllerTest {
     void testPostScenario_Success() throws Exception {
 
         // 1. ARRANGE
-        // ✅ createObjectNode() é o mesmo da API do Jackson 2 — funciona igual no Jackson 3
         JsonNode xrayNode = objectMapper.createObjectNode().put("key", "value");
         JsonNode quizNode = objectMapper.createObjectNode().put("question", "Qual é a flag?");
 
@@ -118,7 +118,7 @@ class AdminControllerTest {
         // 2. ACT
         var resultActions = mockMvc.perform(post("/api/admin/scenarios")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestData)) // ✅ usa o único objectMapper
+                .content(objectMapper.writeValueAsString(requestData))
                 .with(csrf()));
 
         // 3. ASSERT
@@ -152,10 +152,31 @@ class AdminControllerTest {
         System.out.println("Teste de exclusão de trilha com ID " + trailId + " passou com sucesso.");
     }
 
-    // Placeholder
     @Test
-    void placeholder_adminController() {
-        // TODO: adicionar testes de autorização por papel (ADMIN vs USER)
-        assertTrue(true);
+    @DisplayName("Deve retornar 400 Bad Request se tentarem criar uma trilha com título em branco")
+    void postTrail_ShouldReturnBadRequest_WhenTitleIsBlank() throws Exception {
+        // Payload inválido violando o @NotBlank do TrailRequestDTO
+        String invalidPayload = "{ \"title\": \"\", \"description\": \"Descrição válida da trilha\" }";
+
+        mockMvc.perform(post("/api/admin/trails")
+                        .with(oauth2Login().authorities(() -> "ROLE_ADMIN"))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidPayload))
+                // Assert: O Bean Validation do Spring deve capturar o erro e retornar 400 automaticamente
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 Bad Request se tentarem criar uma trilha com descrição nula ou vazia")
+    void postTrail_ShouldReturnBadRequest_WhenDescriptionIsBlank() throws Exception {
+        String invalidPayload = "{ \"title\": \"Trilha de Engenharia Reversa\", \"description\": \"\" }";
+
+        mockMvc.perform(post("/api/admin/trails")
+                        .with(oauth2Login().authorities(() -> "ROLE_ADMIN"))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidPayload))
+                .andExpect(status().isBadRequest());
     }
 }
