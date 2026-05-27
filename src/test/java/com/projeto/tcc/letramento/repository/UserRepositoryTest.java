@@ -121,7 +121,7 @@ class UserRepositoryTest {
         // Segundo usuário tenta usar o mesmo e-mail
         User user2 = new User();
         user2.setName("Usuario Dois");
-        user2.setEmail("duplicado@email.com"); // Causa a violação da constraint UNIQUE
+        user2.setEmail("duplicado@email.com");
         user2.setGoogleId("google-id-2");
 
         // Act & Assert
@@ -144,7 +144,7 @@ class UserRepositoryTest {
         User user2 = new User();
         user2.setName("Usuario Beta");
         user2.setEmail("beta@email.com");
-        user2.setGoogleId("google-id-repetido"); // Causa a violação da constraint UNIQUE
+        user2.setGoogleId("google-id-repetido");
 
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class, () -> {

@@ -51,10 +51,8 @@ class AdminControllerTest {
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
-    // =========================================================
-    // POST /api/admin/trails
-    // =========================================================
 
+    // POST /api/admin/trails
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Deve criar uma nova trilha através do painel admin com status 201 Created")
@@ -72,17 +70,14 @@ class AdminControllerTest {
         // Act & Assert
         mockMvc.perform(post("/api/admin/trails")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestData)) // ✅ usa o único objectMapper
+                        .content(objectMapper.writeValueAsString(requestData))
                         .with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(5))
                 .andExpect(jsonPath("$.title").value("Engenharia Reversa"));
     }
 
-    // =========================================================
     // POST /api/admin/scenarios
-    // =========================================================
-
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Deve criar um novo cenário através do painel admin com status 201 Created")
@@ -140,10 +135,7 @@ class AdminControllerTest {
                 .andExpect(jsonPath("$.titleScenarios").value("Desafio de Engenharia Reversa"));
     }
 
-    // =========================================================
     // DELETE /api/admin/trails/{id}
-    // =========================================================
-
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Deve deletar uma trilha existente através do ID com status 204 No Content")
@@ -160,10 +152,7 @@ class AdminControllerTest {
         System.out.println("Teste de exclusão de trilha com ID " + trailId + " passou com sucesso.");
     }
 
-    // =========================================================
     // Placeholder
-    // =========================================================
-
     @Test
     void placeholder_adminController() {
         // TODO: adicionar testes de autorização por papel (ADMIN vs USER)

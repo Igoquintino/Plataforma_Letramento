@@ -70,14 +70,14 @@ class TrailRepositoryTest {
     void save_ShouldThrowException_WhenTitleIsNull() {
         // Arrange
         Trail trail = new Trail();
-        trail.setTitle(null); // Violação da constraint de banco (nullable = false)
+        trail.setTitle(null);
         trail.setDescription("Descrição válida da trilha.");
 
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class, () -> {
             trailRepository.saveAndFlush(trail);
-            // Nota de Q.A: Usamos saveAndFlush para forçar o JPA a disparar o SQL imediatamente
-            // para o Postgres dentro do método, capturando o erro de constraint no momento exato.
+           /* Nota: Usamos saveAndFlush para forçar o JPA a disparar o SQL imediatamente
+            para o Postgres dentro do methodo, capturando o erro de constraint no momento exato.*/
         });
     }
 
