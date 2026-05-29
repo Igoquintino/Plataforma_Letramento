@@ -26,14 +26,9 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
 
-    @Mock
-    private TrailRepository trailRepository;
-
-    @Mock
-    private ScenarioRepository scenarioRepository;
-
-    @InjectMocks
-    private AdminService adminService;
+    @Mock private TrailRepository trailRepository;
+    @Mock private ScenarioRepository scenarioRepository;
+    @InjectMocks private AdminService adminService;
 
     @Test
     @DisplayName("Deve criar uma Trilha com sucesso")
@@ -142,11 +137,5 @@ class AdminServiceTest {
 
         assertEquals("Trilha não encontrada", exception.getMessage());
         verify(trailRepository, never()).deleteById(anyLong());
-    }
-
-    @Test
-    void placeholder_createDeleteTrail() {
-        // TODO: transactional tests for createTrail/createScenario/deleteTrail
-        assertTrue(true);
     }
 }

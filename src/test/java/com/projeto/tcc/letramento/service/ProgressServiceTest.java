@@ -18,16 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @ExtendWith(MockitoExtension.class)
 class ProgressServiceTest {
 
-    @Mock
-    private ProgressRepository progressRepository;
-
-    @InjectMocks
-    private ProgressService progressService;
+    @Mock private ProgressRepository progressRepository;
+    @InjectMocks private ProgressService progressService;
 
     @Test
     @DisplayName("Deve finalizar o cenário e salvar métricas (score, tempo e status)")
@@ -72,11 +67,5 @@ class ProgressServiceTest {
         );
 
         assertEquals("Progresso não iniciado", exception.getMessage());
-    }
-
-    @Test
-    void placeholder_progressLifecycle() {
-        // TODO: add unit tests for startUserProgress and completeScenario
-        assertTrue(true);
     }
 }

@@ -45,11 +45,8 @@ class ScenarioRepositoryTest {
                 () -> "com.projeto.tcc.letramento.config.Jackson3FormatMapper");
     }
 
-    @Autowired
-    private TrailRepository trailRepository;
-
-    @Autowired
-    private ScenarioRepository scenarioRepository;
+    @Autowired private TrailRepository trailRepository;
+    @Autowired private ScenarioRepository scenarioRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -132,52 +129,46 @@ class ScenarioRepositoryTest {
         assertEquals("Envenenamento de Dados na IA", resultAlt.get(0).getTitleScenarios());
     }
 
-@Test
-@DisplayName("Deve salvar e ler com sucesso uma estrutura complexa de JSONB usando Jackson 3")
-void saveAndReadJsonbFields_Success() {
-
-    ObjectNode complexQuiz = objectMapper.createObjectNode();
-    complexQuiz.put("question_id", 101);
-    complexQuiz.put("correct_answer", "option_B");
-
-    ArrayNode options = objectMapper.createArrayNode();
-    options.add("Opção A: Token Simétrico");
-    options.add("Opção B: Token Assimétrico RS256");
-    complexQuiz.set("options", options);
-
-    ObjectNode dummyXray = objectMapper.createObjectNode();
-    dummyXray.put("status", "analisado");
-
-    Scenario complexScenario = new Scenario();
-    complexScenario.setTitleScenarios("Desafio Avançado de Assinatura JWT");
-    complexScenario.setXrayData(dummyXray);
-    complexScenario.setQuiz(complexQuiz);
-    complexScenario.setPillar(CidPillar.CONFIDENCIALIDADE);
-    complexScenario.setTrail(mainTrail);
-
-    Scenario savedScenario = scenarioRepository.save(complexScenario);
-
-    // Act
-    Scenario retrievedScenario = scenarioRepository.findById(savedScenario.getId()).orElse(null);
-
-    // Assert
-    assertNotNull(retrievedScenario);
-    assertEquals("Desafio Avançado de Assinatura JWT", retrievedScenario.getTitleScenarios());
-
-    // Validando se o motor de persistência recuperou as chaves internas do JSONB perfeitamente
-    assertNotNull(retrievedScenario.getQuiz());
-    assertEquals(101, retrievedScenario.getQuiz().get("question_id").asInt());
-    assertEquals("option_B", retrievedScenario.getQuiz().get("correct_answer").asString());
-
-    // Validando o array aninhado dentro da coluna JSONB
-    assertTrue(retrievedScenario.getQuiz().has("options"));
-    assertEquals(2, retrievedScenario.getQuiz().get("options").size());
-    assertEquals("Opção B: Token Assimétrico RS256", retrievedScenario.getQuiz().get("options").get(1).asString());
-}
-
     @Test
-    void placeholder_findByTrailId() {
-        // TODO: repository slice tests for findByTrailId and JSONB read/write
-        assertTrue(true);
+    @DisplayName("Deve salvar e ler com sucesso uma estrutura complexa de JSONB usando Jackson 3")
+    void saveAndReadJsonbFields_Success() {
+
+        ObjectNode complexQuiz = objectMapper.createObjectNode();
+        complexQuiz.put("question_id", 101);
+        complexQuiz.put("correct_answer", "option_B");
+
+        ArrayNode options = objectMapper.createArrayNode();
+        options.add("Opção A: Token Simétrico");
+        options.add("Opção B: Token Assimétrico RS256");
+        complexQuiz.set("options", options);
+
+        ObjectNode dummyXray = objectMapper.createObjectNode();
+        dummyXray.put("status", "analisado");
+
+        Scenario complexScenario = new Scenario();
+        complexScenario.setTitleScenarios("Desafio Avançado de Assinatura JWT");
+        complexScenario.setXrayData(dummyXray);
+        complexScenario.setQuiz(complexQuiz);
+        complexScenario.setPillar(CidPillar.CONFIDENCIALIDADE);
+        complexScenario.setTrail(mainTrail);
+
+        Scenario savedScenario = scenarioRepository.save(complexScenario);
+
+        // Act
+        Scenario retrievedScenario = scenarioRepository.findById(savedScenario.getId()).orElse(null);
+
+        // Assert
+        assertNotNull(retrievedScenario);
+        assertEquals("Desafio Avançado de Assinatura JWT", retrievedScenario.getTitleScenarios());
+
+        // Validando se o motor de persistência recuperou as chaves internas do JSONB perfeitamente
+        assertNotNull(retrievedScenario.getQuiz());
+        assertEquals(101, retrievedScenario.getQuiz().get("question_id").asInt());
+        assertEquals("option_B", retrievedScenario.getQuiz().get("correct_answer").asString());
+
+        // Validando o array aninhado dentro da coluna JSONB
+        assertTrue(retrievedScenario.getQuiz().has("options"));
+        assertEquals(2, retrievedScenario.getQuiz().get("options").size());
+        assertEquals("Opção B: Token Assimétrico RS256", retrievedScenario.getQuiz().get("options").get(1).asString());
     }
 }

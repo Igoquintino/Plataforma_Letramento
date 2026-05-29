@@ -24,17 +24,11 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TrailServiceTest {
-    @Mock
-    private TrailRepository trailRepository;
 
-    @Mock
-    private ScenarioRepository scenarioRepository;
-
-    @Mock
-    private ProgressRepository progressRepository;
-
-    @InjectMocks
-    private TrailService trailService;
+    @Mock private TrailRepository trailRepository;
+    @Mock private ScenarioRepository scenarioRepository;
+    @Mock private ProgressRepository progressRepository;
+    @InjectMocks private TrailService trailService;
 
     @Test
     @DisplayName("Deve retornar zero de progresso quando a trilha não tiver cenários")
@@ -43,7 +37,6 @@ public class TrailServiceTest {
         Long userId = 1L;
         Long trailId = 10L;
 
-        // Simulando que o repositório de cenários retorna uma lista vazia para esta trilha
         when(scenarioRepository.findByTrailId(trailId)).thenReturn(Collections.emptyList());
 
         // ACT (Ação)
@@ -52,7 +45,6 @@ public class TrailServiceTest {
         // ASSERT (Verificação)
         assertThat(progress).isEqualTo(0.0);
 
-        // Garante que o repositório de progresso sequer foi consultado (otimização de performance)
         verifyNoInteractions(progressRepository);
     }
 

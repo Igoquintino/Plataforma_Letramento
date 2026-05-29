@@ -1,7 +1,7 @@
 package com.projeto.tcc.letramento.controller;
 
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;           // ✅ Jackson 3
+import tools.jackson.databind.ObjectMapper;
 import com.projeto.tcc.letramento.dto.ScenarioRequestDTO;
 import com.projeto.tcc.letramento.enums.CidPillar;
 import com.projeto.tcc.letramento.model.Scenario;
@@ -20,7 +20,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -34,24 +33,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AdminController.class)
 class AdminControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
+    @MockitoBean private AdminService adminService;
+    @MockitoBean private ProgressService progressService;
+    @MockitoBean private ScenarioService scenarioService;
+    @MockitoBean private JwtTokenProvider jwtTokenProvider;
 
-    // ✅ Um único ObjectMapper Jackson 3 para toda a classe
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @MockitoBean
-    private AdminService adminService;
-
-    @MockitoBean
-    private ProgressService progressService;
-
-    @MockitoBean
-    private ScenarioService scenarioService;
-
-    @MockitoBean
-    private JwtTokenProvider jwtTokenProvider;
-
 
     // POST /api/admin/trails
     @Test
@@ -78,7 +66,6 @@ class AdminControllerTest {
                 .andExpect(jsonPath("$.title").value("Engenharia Reversa"));
     }
 
-    // POST /api/admin/scenarios
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Deve criar um novo cenário através do painel admin com status 201 Created")
@@ -163,7 +150,6 @@ class AdminControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidPayload))
-                // Assert: O Bean Validation do Spring deve capturar o erro e retornar 400 automaticamente
                 .andExpect(status().isBadRequest());
     }
 

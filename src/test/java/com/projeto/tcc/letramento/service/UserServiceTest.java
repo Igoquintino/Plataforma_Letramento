@@ -18,7 +18,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -113,7 +112,6 @@ class UserServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
-        // Simula o salvamento retornando o próprio objeto modificado
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -124,11 +122,5 @@ class UserServiceTest {
         assertEquals("Superior Incompleto", result.getAcademicLevel());
         verify(userRepository, times(1)).findById(userId);
         verify(userRepository, times(1)).save(existingUser);
-    }
-
-    @Test
-    void placeholder_processOAuthPostLogin() {
-        // TODO: test processOAuthPostLogin and updateProfile
-        assertTrue(true);
     }
 }

@@ -22,27 +22,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-// placeholder: remove framework-specific annotation to keep skeletons compiling
 @WebMvcTest(TrailController.class)
 class TrailControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockitoBean
-    private TrailService trailService;
-
-    // Mocks complementares de contexto
-    @MockitoBean
-    private ProgressService progressService;
-
-    @MockitoBean
-    private ScenarioService scenarioService;
-
-    @MockitoBean
-    private JwtTokenProvider jwtTokenProvider;
+    @Autowired private MockMvc mockMvc;
+    @MockitoBean private TrailService trailService;
+    @MockitoBean private ProgressService progressService;
+    @MockitoBean private ScenarioService scenarioService;
+    @MockitoBean private JwtTokenProvider jwtTokenProvider;
 
     @Test
     @WithMockUser
@@ -80,11 +67,5 @@ class TrailControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("75.0")); // Como retorna um Double bruto, checamos o texto plano da resposta
-    }
-
-    @Test
-    void placeholder_trailController() {
-        // TODO: MockMvc tests for trails endpoints
-        assertTrue(true);
     }
 }

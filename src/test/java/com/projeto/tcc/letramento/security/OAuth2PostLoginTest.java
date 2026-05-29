@@ -41,11 +41,8 @@ class OAuth2PostLoginTest {
                 () -> "com.projeto.tcc.letramento.config.Jackson3FormatMapper");
     }
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserService userService;
+    @Autowired private UserRepository userRepository;
 
     @Test
     @DisplayName("Deve cadastrar automaticamente o usuário no banco ao fazer o primeiro login via Google OAuth2")
@@ -61,15 +58,8 @@ class OAuth2PostLoginTest {
         assertNotNull(loggedUser.getId());
         assertEquals(name, loggedUser.getName());
 
-        // Confere se realmente persistiu fisicamente no Postgres do Testcontainers
         Optional<User> dbUser = userRepository.findByGoogleId(googleId);
         assertTrue(dbUser.isPresent());
         assertEquals(email, dbUser.get().getEmail());
-    }
-
-    @Test
-    void placeholder_oauth2PostLogin() {
-        // TODO: tests for processOAuthPostLogin behavior
-        assertTrue(true);
     }
 }

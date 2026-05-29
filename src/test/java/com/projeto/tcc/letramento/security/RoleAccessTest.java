@@ -17,7 +17,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest(properties = {
@@ -43,8 +42,7 @@ class RoleAccessTest {
                 () -> "com.projeto.tcc.letramento.config.Jackson3FormatMapper");
     }
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
     @Test
     @DisplayName("Deve barrar acesso a criação de trilhas quando o usuário logado for ALUNO")
@@ -52,15 +50,9 @@ class RoleAccessTest {
         String payload = "{ \"title\": \"Trilha Invasora\", \"description\": \"Tentativa\" }";
 
         mockMvc.perform(post("/api/admin/trails")
-                        .with(oauth2Login().authorities(() -> "ROLE_ALUNO")) // Simula perfil ALUNO
+                        .with(oauth2Login().authorities(() -> "ROLE_ALUNO"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
-                .andExpect(status().isForbidden()); // Espera 403 Forbidden
-    }
-
-    @Test
-    void placeholder_roleAccess() {
-        // TODO: verify ADMIN vs ALUNO endpoint access rules
-        assertTrue(true);
+                .andExpect(status().isForbidden());
     }
 }

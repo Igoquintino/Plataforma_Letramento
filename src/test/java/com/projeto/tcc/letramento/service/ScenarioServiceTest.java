@@ -1,7 +1,7 @@
 package com.projeto.tcc.letramento.service;
 
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;          // ✅ Jackson 3
+import tools.jackson.databind.ObjectMapper;
 import com.projeto.tcc.letramento.model.Scenario;
 import com.projeto.tcc.letramento.repository.ScenarioRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,12 +23,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ScenarioServiceTest {
 
-    @Mock
-    private ScenarioRepository scenarioRepository;
-
-    @InjectMocks
-    private ScenarioService scenarioService;
-
+    @Mock private ScenarioRepository scenarioRepository;
+    @InjectMocks private ScenarioService scenarioService;
     private Scenario mockScenario;
 
     // ✅ ObjectMapper do Jackson 3 — instanciado uma vez na classe

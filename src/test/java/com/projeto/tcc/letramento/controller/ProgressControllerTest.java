@@ -24,33 +24,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// placeholder: remove framework-specific annotation to keep skeletons compiling
-@WebMvcTest(ProgressController.class) // 1. Foca apenas no controller de progresso
+@WebMvcTest(ProgressController.class)
 class ProgressControllerTest {
 
-        @Autowired
-        private MockMvc mockMvc;
-
-        @MockitoBean
-        private ProgressService progressService;
-
-        // Mocks de segurança necessários para o Spring Boot carregar o contexto da Web sem estourar erros
-        @MockitoBean
-        private ScenarioService scenarioService;
-
-        @MockitoBean
-        private JwtTokenProvider jwtTokenProvider;
+        @Autowired private MockMvc mockMvc;
+        @MockitoBean private ProgressService progressService;
+        @MockitoBean private ScenarioService scenarioService;
+        @MockitoBean private JwtTokenProvider jwtTokenProvider;
 
         @Test
-        @WithMockUser // Simula o usuário autenticado para passar pelos filtros de segurança
+        @WithMockUser
         @DisplayName("Deve retornar a lista de progresso do dashboard do aluno com status 200")
         void testGetDashboard_Success() throws Exception {
-            // Arrange (Preparação)
+            // Arrange
             Long userId = 1L;
 
-            // Criamos um objeto de progresso falso para fingir que veio do banco
             Progress mockProgress = new Progress();
             mockProgress.setId(10L);
             mockProgress.setStatus(ProgressStatus.COMPLETED);
@@ -59,16 +48,13 @@ class ProgressControllerTest {
             mockProgress.setUserFeedback("Ótimo simulador Raio-X");
             mockProgress.setCompletedAt(LocalDateTime.now());
 
-            // Enfeitiçamos o serviço: "Quando perguntarem pelo progresso do usuário 1, retorne a lista com nosso mock"
             when(progressService.getStudentDashboard(userId)).thenReturn(List.of(mockProgress));
 
-            // Act & Assert (Ação e Validação)
-            // Como a rota mapeia "/api/progress/dashboard/{userId}", passamos o ID na URL
+            // Act & Assert
             mockMvc.perform(get("/api/progress/dashboard/" + userId)
                             .contentType(MediaType.APPLICATION_JSON).with(csrf()))
-                    .andExpect(status().isOk()) // Confirma que retornou HTTP 200
+                    .andExpect(status().isOk())
 
-                    // 💡 NOVIDADE DE Q.A: jsonPath ajuda a navegar dentro do JSON retornado para inspecionar os campos
                     // Como retorna uma lista [], $[0] significa "o primeiro item da lista"
                     .andExpect(jsonPath("$[0].id").value(10))
                     .andExpect(jsonPath("$[0].status").value("COMPLETED"))
@@ -76,10 +62,4 @@ class ProgressControllerTest {
                     .andExpect(jsonPath("$[0].TimeSpent").value(45L))
                     .andExpect(jsonPath("$[0].userFeedback").value("Ótimo simulador Raio-X"));
         }
-
-    @Test
-    void placeholder_progressController() {
-        // TODO: MockMvc tests for progress dashboard endpoints
-        assertTrue(true);
-    }
 }

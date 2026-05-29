@@ -21,8 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class SecurityIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
     @Test
     @DisplayName("Deve barrar (401) a criação de uma trilha se o usuário for anônimo")
@@ -35,17 +34,15 @@ class SecurityIntegrationTest {
                 .andExpect(status().isUnauthorized());
     }
 
-
     @Test
     @DisplayName("Deve barrar (403) a criação de uma trilha se o usuário estiver logado apenas como ALUNO")
     void createTrail_StudentUser_ShouldBeForbidden() throws Exception {
         String trailPayload = "{ \"title\": \"Trilha Hacker\", \"description\": \"Tentativa de Injeção\" }";
 
         mockMvc.perform(post("/api/admin/trails")
-                        .with(oauth2Login().authorities(() -> "ROLE_ALUNO")) // Simula login do Google como ALUNO
+                        .with(oauth2Login().authorities(() -> "ROLE_ALUNO"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(trailPayload))
-                // O aluno não tem permissão de escrita administrativa, logo: 403 Forbidden
                 .andExpect(status().isForbidden());
     }
 
@@ -55,11 +52,9 @@ class SecurityIntegrationTest {
         String trailPayload = "{ \"title\": \"Trilha Redes Sociais\", \"description\": \"Validando Engenharia Social\" }";
 
         mockMvc.perform(post("/api/admin/trails")
-                        .with(oauth2Login().authorities(() -> "ROLE_ADMIN")) // Simula login corporativo/ADMIN
+                        .with(oauth2Login().authorities(() -> "ROLE_ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(trailPayload))
-                // Uma vez implementada a segurança e o mock correspondente, deve prosseguir para a criação (201 Created)
                 .andExpect(status().isCreated());
     }
-
 }

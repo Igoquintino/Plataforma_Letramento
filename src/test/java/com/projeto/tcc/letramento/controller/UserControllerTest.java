@@ -25,28 +25,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
+    @MockitoBean private UserService userService;
+    @MockitoBean private ProgressService progressService;
+    @MockitoBean private ScenarioService scenarioService;
+    @MockitoBean private JwtTokenProvider jwtTokenProvider;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @MockitoBean
-    private UserService userService;
-
-    // Mocks de infraestrutura necessários para carregar o contexto web
-    @MockitoBean
-    private ProgressService progressService;
-
-    @MockitoBean
-    private ScenarioService scenarioService;
-
-    @MockitoBean
-    private JwtTokenProvider jwtTokenProvider;
 
     @Test
     @WithMockUser
@@ -93,14 +82,8 @@ class UserControllerTest {
         mockMvc.perform(patch("/api/users/" + userId + "/profile")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateData))
-                        .with(csrf())) // Proteção CSRF obrigatória para verbos modificadores (PATCH)
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.academicLevel").value("Superior Completo"));
-    }
-
-    @Test
-    void placeholder_userController() {
-        // TODO: MockMvc tests for user profile endpoints
-        assertTrue(true);
     }
 }

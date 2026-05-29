@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;           // ✅ Boot 4
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase; // ✅ Boot 4
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -51,17 +51,10 @@ class ProgressRepositoryTest {
                 () -> "com.projeto.tcc.letramento.config.Jackson3FormatMapper");
     }
 
-    @Autowired
-    private ProgressRepository progressRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private TrailRepository trailRepository;
-
-    @Autowired
-    private ScenarioRepository scenarioRepository;
+    @Autowired private ProgressRepository progressRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private TrailRepository trailRepository;
+    @Autowired private ScenarioRepository scenarioRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -167,11 +160,5 @@ class ProgressRepositoryTest {
 
         // Assert
         assertFalse(result.isPresent());
-    }
-
-    @Test
-    void placeholder_findByUserId() {
-        // TODO: tests for findByUserId and concurrency behaviors
-        assertTrue(true);
     }
 }

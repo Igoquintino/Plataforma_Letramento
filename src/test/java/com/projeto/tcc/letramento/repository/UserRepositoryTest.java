@@ -15,8 +15,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,8 +43,7 @@ class UserRepositoryTest {
                 () -> "com.projeto.tcc.letramento.config.Jackson3FormatMapper");
     }
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
     @Test
     @DisplayName("Deve buscar e retornar um usuário com sucesso pelo e-mail cadastrado")
@@ -150,11 +147,5 @@ class UserRepositoryTest {
         assertThrows(DataIntegrityViolationException.class, () -> {
             userRepository.saveAndFlush(user2);
         });
-    }
-
-    @Test
-    void placeholder_userRepository() {
-        // TODO: repository tests for findByEmail and findByGoogleId
-        assertTrue(true);
     }
 }

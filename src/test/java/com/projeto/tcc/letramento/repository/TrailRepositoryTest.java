@@ -14,12 +14,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 @DataJpaTest
 @Testcontainers
@@ -44,8 +42,7 @@ class TrailRepositoryTest {
                 () -> "com.projeto.tcc.letramento.config.Jackson3FormatMapper");
     }
 
-    @Autowired
-    private TrailRepository trailRepository;
+    @Autowired private TrailRepository trailRepository;
 
     @Test
     @DisplayName("Deve persistir e recuperar uma Trilha com sucesso quando os dados forem válidos")
@@ -76,7 +73,7 @@ class TrailRepositoryTest {
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class, () -> {
             trailRepository.saveAndFlush(trail);
-           /* Nota: Usamos saveAndFlush para forçar o JPA a disparar o SQL imediatamente
+           /* Nota: Usar o saveAndFlush para forçar o JPA a disparar o SQL imediatamente
             para o Postgres dentro do methodo, capturando o erro de constraint no momento exato.*/
         });
     }
@@ -115,11 +112,5 @@ class TrailRepositoryTest {
         assertEquals("Trilha Atualizada", found.get().getTitle());
         assertEquals("Descrição Atualizada", found.get().getDescription());
         assertEquals(savedTrail.getId(), found.get().getId()); // Garante que o ID permaneceu o mesmo
-    }
-
-    @Test
-    void placeholder_trailRepository() {
-        // TODO: basic CRUD tests for TrailRepository
-        assertTrue(true);
     }
 }
