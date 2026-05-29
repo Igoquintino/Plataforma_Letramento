@@ -18,10 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(properties = {
-        "spring.security.oauth2.client.registration.google.client-id=mock-google-id",
-        "spring.security.oauth2.client.registration.google.client-secret=mock-google-secret"
-})
+@SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
 class OAuth2PostLoginTest {

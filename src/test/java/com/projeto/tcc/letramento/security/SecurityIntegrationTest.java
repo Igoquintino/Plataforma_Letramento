@@ -13,10 +13,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest (properties = {
-        "spring.security.oauth2.client.registration.google.client-id=mock-google-client-id",
-        "spring.security.oauth2.client.registration.google.client-secret=mock-google-client-secret"
-})
+@SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class SecurityIntegrationTest {
