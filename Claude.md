@@ -1504,7 +1504,7 @@ Use `@Transactional` em methods que alteram múltiplas entidades. Ex: AdminServi
 Sempre use Bean Validation (@Valid, @NotNull, @NotBlank) em @RequestBody. Deixa a validação centralizada e legível.
 
 ---
-
+```
 **Nota para I.A.:**
 Este Claude.md é sua "Bússola de Contexto" completa. Refira-se a ele antes de implementar novas funcionalidades. Mantenha coesão arquitetural, priorize Java 17 features, MapStruct, BigDecimal, Records e Kotlin type-safety. O sistema deve permanecer leve, escalável e seguro.
 ```
