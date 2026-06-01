@@ -59,7 +59,7 @@ class ProgressControllerTest {
                     .andExpect(jsonPath("$[0].id").value(10))
                     .andExpect(jsonPath("$[0].status").value("COMPLETED"))
                     .andExpect(jsonPath("$[0].quizScore").value(100.00))
-                    .andExpect(jsonPath("$[0].TimeSpent").value(45L))
+                    .andExpect(jsonPath("$[0].timeSpent").value(45L))
                     .andExpect(jsonPath("$[0].userFeedback").value("Ótimo simulador Raio-X"));
         }
 }
