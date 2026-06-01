@@ -39,10 +39,14 @@ public class UserService {
     // Atualiza os dados acadêmicos do aluno para segmentação na sua pesquisa
     public User updateProfile(Long userId, UserUpdateDTO data) {
 
-        // Atualiza curso e nível acadêmico para o TCC
         User user = findById(userId);
         user.setCourse(data.course());
         user.setAcademicLevel(data.academicLevel());
         return userRepository.save(user);
+    }
+
+    public User findByGoogleId(String googleId) {
+        return userRepository.findByGoogleId(googleId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o Google ID: " + googleId));
     }
 }

@@ -33,15 +33,14 @@ public class UserController {
                 updatedUser.getName(),
                 updatedUser.getEmail(),
                 updatedUser.getCourse(),
-                updatedUser.getAcademicLevel()
+                updatedUser.getAcademicLevel(),
+                updatedUser.getRole(),
+                updatedUser.getCreatedAt()
         );
 
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Busca os dados do perfil do usuário logado.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserProfile(@PathVariable Long id) {
         User user = userService.findById(id);
@@ -50,7 +49,9 @@ public class UserController {
                 user.getName(),
                 user.getEmail(),
                 user.getCourse(),
-                user.getAcademicLevel()
+                user.getAcademicLevel(),
+                user.getRole(),
+                user.getCreatedAt()
         );
         return ResponseEntity.ok(response);
     }

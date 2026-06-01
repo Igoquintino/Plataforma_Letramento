@@ -52,6 +52,7 @@ public class ProgressService {
         progress.setStatus(ProgressStatus.COMPLETED);
         progress.setCompletedAt(LocalDateTime.now());
 
-        return progressRepository.save(progress);
+        progressRepository.save(progress);
+        return progress;
     }
 }
